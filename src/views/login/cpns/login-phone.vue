@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts">
+import { useStore } from 'vuex'
 import { defineComponent, reactive } from 'vue'
 import { rules } from '../config/account-config'
 export default defineComponent({
@@ -23,9 +24,15 @@ export default defineComponent({
       num: '',
       code: ''
     })
+    const store = useStore()
+    const loginAction = () => {
+      console.log('phone login')
+      store.dispatch('login/phoneLoginAction', { ...phone })
+    }
     return {
       rules,
-      phone
+      phone,
+      loginAction
     }
   }
 })
