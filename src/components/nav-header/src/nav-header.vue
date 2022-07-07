@@ -9,12 +9,19 @@
       <DArrowRight />
     </el-icon>
   </template>
+  <div class="content">
+    <div>1</div>
+    <user-info></user-info>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-
+import userInfo from './user-info.vue'
 export default defineComponent({
+  components: {
+    userInfo
+  },
   emits: ['foldChange'],
   setup(props, { emit }) {
     const isFold = ref(false)
@@ -27,8 +34,18 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .arrow-icon {
   cursor: pointer;
+}
+.nav-header {
+  display: flex;
+  justify-content: space-between;
+}
+.content {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  padding: 0 20px;
 }
 </style>

@@ -7,26 +7,24 @@
 
     <el-menu
       class="el-menu"
-      default-active="1-1"
+      :default-active="defaultValue"
       text-color="#b5bbc0"
       :collapse="collapse"
       :collapse-transition="false"
     >
-      <template v-for="(item, index) in userMenus" :key="item.id">
+      <template v-for="item in userMenus" :key="item.id">
         <!-- 一级菜单 -->
-        <el-sub-menu class="el-submenu" :index="index + 1 + ''">
+        <el-sub-menu class="el-submenu" :index="item.id + ''">
           <template #title>
             <el-icon><Tools /></el-icon>
             <span>{{ item.name }}</span>
           </template>
           <!-- 二级菜单 -->
-          <template
-            v-for="(subitem, indexx) in item.children"
-            :key="subitem.id"
-          >
+          <template v-for="subitem in item.children" :key="subitem.id">
             <el-menu-item
               class="el-menu-item"
-              :index="index + 1 + '-' + (indexx + 1)"
+              :index="subitem.id + ''"
+              @click="handleMenuCLick(subitem)"
             >
               <span>{{ subitem.name }}</span>
             </el-menu-item>
@@ -38,9 +36,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { useStore } from '@/store'
-
+import { useRouter, useRoute } from 'vue-router'
+import { pathMapToMenu } from '@/utils/map-menus'
 export default defineComponent({
   props: {
     collapse: {
@@ -50,10 +49,20 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    const userMenus = store.state.login.userMenus
+    const userMenus = computed(() => store.state.login.userMenus)
+    const router = useRouter()
+    const handleMenuCLick = (item: any) => {
+      console.log(item)
+      router.push({
+        path: item.url ?? '/not-found'
+      })
+    }
 
-    const icons = ['<el-icon><Aim /></el-icon>']
-    return { userMenus, icons }
+    const route = useRoute()
+    const currentPath = route.path
+    const menu = pathMapToMenu(userMenus.value, currentPath)
+    const defaultValue = ref(menu.id + '')
+    return { userMenus, handleMenuCLick, defaultValue }
   }
 })
 </script>

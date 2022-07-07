@@ -9,6 +9,8 @@ import {
 import { IAccount } from '../../service/login/type'
 
 import localCahe from '../../utils/cache'
+import { mapMenusToRoutes } from '@/utils/map-menus'
+
 import router from '@/router'
 //Module<S,R> S->模块的state类型,R->根store的类型
 const loginModule: Module<ILoginState, IRootStore> = {
@@ -30,6 +32,13 @@ const loginModule: Module<ILoginState, IRootStore> = {
     },
     changeUserMenus(state, userMenus: any) {
       state.userMenus = userMenus
+
+      //userMenus->route
+      const routes = mapMenusToRoutes(userMenus)
+      routes.forEach((route) => {
+        router.addRoute('main', route)
+      })
+      // console.log(routes)
     }
   },
   actions: {

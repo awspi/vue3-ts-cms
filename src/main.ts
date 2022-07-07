@@ -10,8 +10,8 @@ import router from './router'
 import store from './store'
 import { setupStore } from './store'
 const app = createApp(App)
-app.use(router)
 app.use(store).use(globalRegister)
-setupStore()
+setupStore() //注意顺序,先注册完路由再使用router
+app.use(router)
 
 app.mount('#app')
