@@ -1,6 +1,6 @@
 import spRequest from '../index'
-import { IAccount, IDataType, ILogionResult } from './type'
-
+import { IAccount, ILogionResult } from './type'
+import { IDataType } from '../types'
 enum LoginAPI {
   AccountLogin = '/login',
   LoginUserInfo = '/users/',

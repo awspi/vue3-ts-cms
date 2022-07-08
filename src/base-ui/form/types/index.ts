@@ -1,5 +1,6 @@
 type IFomrType = 'input' | 'password' | 'select' | 'datepicker'
 export interface IFormItem {
+  field: string
   type: IFomrType
   label: string
   rules?: any[]

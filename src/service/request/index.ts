@@ -63,7 +63,7 @@ class SPRequest {
     )
   }
 
-  request<T>(config: SPRequestConfig<T>): Promise<T> {
+  request<T = any>(config: SPRequestConfig<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       // 1.单个请求对请求config的处理
       if (config.interceptors?.requestInterceptor) {
@@ -92,16 +92,16 @@ class SPRequest {
         })
     })
   }
-  get<T>(config: SPRequestConfig<T>): Promise<T> {
+  get<T = any>(config: SPRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'GET' })
   }
-  post<T>(config: SPRequestConfig<T>): Promise<T> {
+  post<T = any>(config: SPRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'POST' })
   }
-  delete<T>(config: SPRequestConfig<T>): Promise<T> {
+  delete<T = any>(config: SPRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'DELETE' })
   }
-  patch<T>(config: SPRequestConfig<T>): Promise<T> {
+  patch<T = any>(config: SPRequestConfig<T>): Promise<T> {
     return this.request<T>({ ...config, method: 'PATCH' })
   }
 }
