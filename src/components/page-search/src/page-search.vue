@@ -7,7 +7,7 @@
       <template #footer>
         <div class="handle-button">
           <el-button @click="handleResetClick">重置</el-button>
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="handleSearchClick">搜索</el-button>
         </div>
       </template>
     </sp-form>
@@ -27,7 +27,8 @@ export default defineComponent({
   components: {
     spForm
   },
-  setup(props) {
+  emits: ['resetBtnClick', 'searchBtnClick'],
+  setup(props, { emit }) {
     //双向绑定的属性 由 配置文件的field决定
     const formItems = props.searchFormConfig.formItems ?? []
     const formOriginData: any = {}
@@ -36,11 +37,17 @@ export default defineComponent({
     }
     const formData = ref(formOriginData)
 
-    //handleResetClick
+    //handleResetClick 重置按钮点击
     const handleResetClick = () => {
       formData.value = formOriginData
+      emit('resetBtnClick')
     }
-    return { formData, handleResetClick }
+
+    //搜索
+    const handleSearchClick = () => {
+      emit('searchBtnClick', formData.value)
+    }
+    return { formData, handleResetClick, handleSearchClick }
   }
 })
 </script>

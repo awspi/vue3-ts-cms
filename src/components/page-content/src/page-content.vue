@@ -1,6 +1,11 @@
 <template>
   <div class="page-contetnt">
-    <sp-table :listData="dataList" v-bind="contentTableConfig">
+    <sp-table
+      :listData="dataList"
+      :dataCount="dataCount"
+      v-bind="contentTableConfig"
+      v-model:page="pageInfo"
+    >
       <!-- header中的插槽 -->
       <template #header-handler>
         <el-button type="primary">
@@ -13,20 +18,8 @@
         </el-button>
       </template>
 
-      <template #footer>
-        <el-pagination
-          v-model:currentPage="currentPage4"
-          v-model:page-size="pageSize4"
-          :page-sizes="[100, 200, 300, 400]"
-          :small="small"
-          :disabled="disabled"
-          :background="background"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </template>
+      <!-- <template #footer> </template> -->
+
       <!-- //columon中的插槽 -->
       <template #status="scope">
         <el-button
@@ -49,14 +42,22 @@
           <el-link size="small" type="danger">删除</el-link>
         </div>
       </template>
-      <!-- <template #header>1</template>
-        <template #footer>2</template> -->
+
+      <template
+        v-for="item in otherPropSlots"
+        :key="item.prop"
+        #[item.slotName]="scope"
+      >
+        <template v-if="item.slotName">
+          <slot :name="item.slotName" :row="scope.row"></slot>
+        </template>
+      </template>
     </sp-table>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref, watch } from 'vue'
 import spTable from '@/base-ui/table'
 import { useStore } from '@/store'
 export default defineComponent({
@@ -75,20 +76,43 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore()
-    store.dispatch('system/getPageListAction', {
-      pageName: props.pageName,
-      queryInfo: {
-        offset: 0,
-        size: 10
-      }
-    })
 
+    //1.双向绑定pageInfo
+    const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+    watch(pageInfo, () => getPageData())
+    //2.发送网络请求
+    const getPageData = (queryInfo: any = {}) => {
+      store.dispatch('system/getPageListAction', {
+        pageName: props.pageName,
+        queryInfo: {
+          offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+          size: pageInfo.value.pageSize,
+          ...queryInfo
+        }
+      })
+    }
+    getPageData()
+
+    //3.从vuex中获取数据
     const dataList = computed(() =>
       store.getters['system/pageListData'](props.pageName)
     )
     // const userCount = computed(() => store.state.system.userCount)
+    const dataCount = computed(() =>
+      store.getters['system/pageListCount'](props.pageName)
+    )
+    // 4.获取其他的动态插槽名称
+    const otherPropSlots = props.contentTableConfig.propList.filter(
+      (item: any) => {
+        if (item.slotName === 'status') return false
+        if (item.slotName === 'createAt') return false
+        if (item.slotName === 'updateAt') return false
+        if (item.slotName === 'handler') return false
+        return true
+      }
+    )
 
-    return { dataList }
+    return { dataList, getPageData, dataCount, pageInfo, otherPropSlots }
   }
 })
 </script>
