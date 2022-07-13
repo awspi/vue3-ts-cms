@@ -1,7 +1,7 @@
 export const contentTableConfig = {
   title: '用户列表',
   propList: [
-    { prop: 'name', label: '用户名', minWidth: 100, slotName: 'name' },
+    { prop: 'name', label: '用户名', minWidth: 100 },
     {
       prop: 'realname',
       label: '真实姓名',
@@ -27,7 +27,7 @@ export const contentTableConfig = {
       minWidth: 210,
       slotName: 'updateAt'
     },
-    { label: '操作', minWidth: '120', slotName: 'handle' }
+    { label: '操作', minWidth: '120', slotName: 'handler' }
   ],
   showIndexColumn: true,
   showSelectColumn: true

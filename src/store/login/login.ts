@@ -9,7 +9,7 @@ import {
 import { IAccount } from '../../service/login/type'
 
 import localCahe from '../../utils/cache'
-import { mapMenusToRoutes } from '@/utils/map-menus'
+import { mapMenusToRoutes, mapMenusToPermissions } from '@/utils/map-menus'
 
 import router from '@/router'
 //Module<S,R> S->模块的state类型,R->根store的类型
@@ -19,7 +19,8 @@ const loginModule: Module<ILoginState, IRootStore> = {
     return {
       token: '',
       userInfo: {},
-      userMenus: []
+      userMenus: [],
+      permissions: []
     }
   },
   getters: {},
@@ -39,6 +40,10 @@ const loginModule: Module<ILoginState, IRootStore> = {
         router.addRoute('main', route)
       })
       // console.log(routes)
+
+      //获取用户按钮权限
+      const permissions = mapMenusToPermissions(userMenus)
+      state.permissions = permissions
     }
   },
   actions: {

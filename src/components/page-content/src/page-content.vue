@@ -7,10 +7,10 @@
       v-model:page="pageInfo"
     >
       <!-- header中的插槽 -->
-      <template #header-handler>
-        <el-button type="primary">
+      <template #header-handler v-if="isCreate">
+        <el-button type="primary" @click="handleNewClick">
           <el-icon><Finished /></el-icon>
-          新建用户
+          新建
         </el-button>
         <el-button>
           <el-icon><Refresh /> </el-icon>
@@ -36,10 +36,22 @@
       <template #updateAt="scope">
         <strong>{{ $filters.formatTime(scope.row.updateAt) }}</strong>
       </template>
-      <template #handle>
+      <template #handler="scope">
         <div class="handle-btns">
-          <el-link size="small" type="primary">编辑</el-link>
-          <el-link size="small" type="danger">删除</el-link>
+          <el-link
+            size="small"
+            type="primary"
+            v-if="isUpdate"
+            @click="handleEditClick(scope.row)"
+            >编辑</el-link
+          >
+          <el-link
+            size="small"
+            type="danger"
+            v-if="isDelete"
+            @click="handleDeleteClick(scope.row)"
+            >删除</el-link
+          >
         </div>
       </template>
 
@@ -60,7 +72,9 @@
 import { defineComponent, computed, ref, watch } from 'vue'
 import spTable from '@/base-ui/table'
 import { useStore } from '@/store'
+import { usePermission } from '@/hooks/use-permisson'
 export default defineComponent({
+  emits: ['newBtnClick', 'editBtnClick'],
   components: {
     spTable
   },
@@ -74,18 +88,24 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const store = useStore()
 
+    //0.获取操作的权限
+    const isCreate = usePermission(props.pageName, 'create')
+    const isUpdate = usePermission(props.pageName, 'update')
+    const isDelete = usePermission(props.pageName, 'delete')
+    const isQuery = usePermission(props.pageName, 'query')
     //1.双向绑定pageInfo
-    const pageInfo = ref({ currentPage: 0, pageSize: 10 })
+    const pageInfo = ref({ currentPage: 1, pageSize: 10 })
     watch(pageInfo, () => getPageData())
     //2.发送网络请求
     const getPageData = (queryInfo: any = {}) => {
+      if (!isQuery) return
       store.dispatch('system/getPageListAction', {
         pageName: props.pageName,
         queryInfo: {
-          offset: pageInfo.value.currentPage * pageInfo.value.pageSize,
+          offset: (pageInfo.value.currentPage - 1) * pageInfo.value.pageSize,
           size: pageInfo.value.pageSize,
           ...queryInfo
         }
@@ -112,7 +132,32 @@ export default defineComponent({
       }
     )
 
-    return { dataList, getPageData, dataCount, pageInfo, otherPropSlots }
+    //5删除
+    const handleDeleteClick = (item: any) => {
+      store.dispatch('system/deletePageDataAction', {
+        pageName: props.pageName,
+        id: item.id
+      })
+    }
+    const handleEditClick = (item: any) => {
+      emit('editBtnClick', item)
+    }
+    const handleNewClick = () => {
+      emit('newBtnClick')
+    }
+    return {
+      dataList,
+      getPageData,
+      dataCount,
+      pageInfo,
+      otherPropSlots,
+      isCreate,
+      isDelete,
+      isUpdate,
+      handleDeleteClick,
+      handleNewClick,
+      handleEditClick
+    }
   }
 })
 </script>
