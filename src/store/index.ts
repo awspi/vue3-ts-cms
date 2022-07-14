@@ -9,7 +9,8 @@ const store = createStore<IRootStore>({
   state() {
     return {
       entireDepartment: [],
-      entireRole: []
+      entireRole: [],
+      entireMenu: []
     }
   },
   mutations: {
@@ -18,6 +19,9 @@ const store = createStore<IRootStore>({
     },
     chanegEntireRole(state, list) {
       state.entireRole = list
+    },
+    changeEntireMenu(state, list) {
+      state.entireMenu = list
     }
   },
   actions: {
@@ -33,6 +37,13 @@ const store = createStore<IRootStore>({
         size: 100
       })
       const { list: role } = roleRes.data
+
+      //
+      const menuResult = await getPageList('/menu/list', {})
+
+      const { list: menuList } = menuResult.data
+
+      commit('changeEntireMenu', menuList)
 
       commit('chanegEntireDepartment', department)
       commit('chanegEntireRole', role)

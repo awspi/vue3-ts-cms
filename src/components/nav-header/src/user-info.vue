@@ -18,7 +18,7 @@
             <el-icon><Lock /></el-icon>
             <span>修改密码</span>
           </el-dropdown-item>
-          <el-dropdown-item divided>
+          <el-dropdown-item divided @click="quitClick">
             <el-icon><CircleClose /></el-icon>
             <span>退出登录</span>
           </el-dropdown-item>
@@ -31,11 +31,20 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from '@/store'
+import LocalCache from '@/utils/cache'
+import { useRouter } from 'vue-router'
+
 export default defineComponent({
   setup() {
     const store = useStore()
     const userName = computed(() => store.state.login.userInfo.name)
-    return { userName }
+
+    const router = useRouter()
+    const quitClick = () => {
+      LocalCache.deleteCache('token')
+      router.push('/main')
+    }
+    return { userName, quitClick }
   }
 })
 </script>

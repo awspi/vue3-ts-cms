@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import pageModel from '@/components/page-model'
 
-type CallbackFn = () => void
+type CallbackFn = (item?: any) => void
 
 export function usePageModel(newCb?: CallbackFn, editCb?: CallbackFn) {
   const pageModelRef = ref<InstanceType<typeof pageModel>>()
@@ -12,7 +12,7 @@ export function usePageModel(newCb?: CallbackFn, editCb?: CallbackFn) {
     if (pageModelRef.value) {
       pageModelRef.value.dialogVisible = true
     }
-    editCb && editCb()
+    editCb && editCb(item)
   }
   const handleNewBtnClick = () => {
     defaultInfo.value = {}

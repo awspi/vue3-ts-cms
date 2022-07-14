@@ -35,7 +35,7 @@
                     :value="option.value"
                     :key="option.value"
                     :label="option.title"
-                    >{{ option.title }}</el-option
+                    >{{ option.title ?? option.label }}</el-option
                   >
                 </el-select>
               </template>
