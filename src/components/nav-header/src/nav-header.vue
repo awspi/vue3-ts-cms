@@ -22,6 +22,7 @@ import spBreadcrumb from '@/base-ui/breadcrumb'
 import { pathMapBreadcrumbs } from '@/utils/map-menus'
 import { useStore } from '@/store'
 import { useRoute } from 'vue-router'
+// import useEchart from '@/base-ui/echart/hooks/useEchart'
 export default defineComponent({
   components: {
     userInfo,
@@ -29,10 +30,12 @@ export default defineComponent({
   },
   emits: ['foldChange'],
   setup(props, { emit }) {
+    // const { updateSize } = useEchart()
     const isFold = ref(false)
     const handleFold = () => {
       isFold.value = !isFold.value
       emit('foldChange', isFold.value)
+      // updateSize()
     }
     const store = useStore()
 

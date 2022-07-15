@@ -2,7 +2,7 @@ import { createStore, Store, useStore as useVuexStore } from 'vuex'
 import { IRootStore, IStoreType } from './type'
 import login from './login/login'
 import system from './main/system/system'
-
+import dashboard from './main/analysis/dashboard'
 import { getPageList } from '@/service/main/system/system'
 
 const store = createStore<IRootStore>({
@@ -51,7 +51,8 @@ const store = createStore<IRootStore>({
   },
   modules: {
     login,
-    system
+    system,
+    dashboard
   }
 })
 
